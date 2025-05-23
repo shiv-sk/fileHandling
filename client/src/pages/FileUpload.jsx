@@ -111,6 +111,14 @@ export default function FileUpload(){
             </div>
             {filePreview()}
             <p>maxFileSize 1MB</p>
+            {
+                file ? (
+                    <div className="flex flex-col items-center gap-1">
+                        <span>selectedFileName: {file?.name}</span>
+                        <span>selectedFileSize: {(file?.size / 1024).toFixed(2)}Kb</span>
+                    </div>
+                ) : ""
+            }
             <button className="btn btn-secondary" type='button' onClick={handleUpload}>upload</button>
         </div>
     )

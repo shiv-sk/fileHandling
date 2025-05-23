@@ -19,7 +19,7 @@ exports.currentUser = asyncHandler(async(req , res)=>{
             new ApiResponse("Unauthorized", {} , 401)
         )
     }
-    decodeToken = jwt.verify(token , process.env.JWT_TOKEN_SECRET);
+    const decodeToken = jwt.verify(token , process.env.JWT_TOKEN_SECRET);
     const user = await User.findById(decodeToken.id).select("-password");
     if(!user){
         throw new ApiError(404 , "user not found! ");
@@ -75,7 +75,7 @@ exports.register = asyncHandler(async (req,res)=>{
     const options = {
         httpOnly:true,
         secure:true,
-        sameSite:"strict",
+        sameSite: "None",
     }
     return res.status(201).cookie("accessToken" , accessToken , options).json(
         new ApiResponse("user is created" , user , 200)
@@ -97,7 +97,7 @@ exports.login = asyncHandler(async(req,res)=>{
     const options = {
         httpOnly:true,
         secure:true,
-        sameSite:"strict",
+        sameSite: "None",
     }
     const accessToken = Token(user);
     return res.status(200).cookie("accessToken" , accessToken , options).json(
