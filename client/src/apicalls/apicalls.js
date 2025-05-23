@@ -7,7 +7,8 @@ const getAndDeleteReq = async(url , method)=>{
             url,
             method,
             headers:{
-                "Content-Type": "application/json"
+                "Content-Type": "application/json",
+                'Connection': 'keep-alive'
             },
             withCredentials:true
         }
@@ -27,7 +28,8 @@ const postAndPatchReq = async(url , method , data , isFormData = false , onUploa
             method,
             data,
             headers:{
-                "Content-Type": isFormData ? "multipart/form-data" : "application/json"
+                "Content-Type": isFormData ? "multipart/form-data" : "application/json",
+                'Connection': 'keep-alive'
             },
             withCredentials:true,
         }
