@@ -2,7 +2,7 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const helmet = require("helmet");
-const allowedOrigins = ["http://localhost:5173"];
+const allowedOrigins = ["http://localhost:5173" , "https://file-handling-tau.vercel.app"];
 const cookieParser = require("cookie-parser");
 const corsOption = {
     origin:function(origin , callback){
