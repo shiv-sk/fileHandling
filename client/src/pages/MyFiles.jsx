@@ -36,10 +36,12 @@ export default function MyFiles(){
                     {
                         isLoading ? "Loading..." :
                         allFiles && allFiles.length > 0 ? allFiles.map((file)=>(
-                            <div className="card bg-base-100 w-96 shadow-lg" key={file._id}>
+                            <div className="card bg-base-100 w-96 shadow-lg rounded-lg" key={file._id}>
                                 <div className="card-body">
-                                    <h2 className="card-title">{file.fileName.split("-").splice(1) || "fileName"}</h2>
-                                    <p>{file.fileSize || "fileSize"}Kb</p>
+                                    <h2 className="card-title">
+                                        fileName: {file.fileName.split("-").splice(1) || "fileName"}
+                                    </h2>
+                                    <p>fileSize: {file.fileSize || "fileSize"}Kb</p>
                                     <div className="card-actions justify-end">
                                     <Link to={`/file/detail/${file._id}`}>
                                         <button className="btn btn-secondary text-white shadow-lg border-b-2 rounded-lg">More</button>

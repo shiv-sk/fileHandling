@@ -63,12 +63,12 @@ export default function FileUpload(){
     }
     const handleUpload = async(e)=>{
         e.preventDefault();
-        if(!file){
-            toast.error("please select file!");
+        if(!user || !user._id){
+            toast.error("please login! ");
             return;
         }
-        else if(!user || !user._id){
-            toast.error("please login! ");
+        else if(!file){
+            toast.error("please select file!");
             return;
         }
         setIsLoading(true);

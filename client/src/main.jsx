@@ -10,6 +10,7 @@ import FileDetail from './pages/FileDetail.jsx';
 import MyFiles from './pages/MyFiles.jsx';
 import Login from './pages/Login.jsx';
 import Register from './pages/Regitser.jsx';
+import ProtectedRoute from './utils/ProtectedRoute.jsx';
 
 const router = createBrowserRouter([
   {
@@ -18,15 +19,30 @@ const router = createBrowserRouter([
     children:[
       {
         path:"",
-        element:<FileUpload/>
+        element:(
+          <ProtectedRoute>
+            <FileUpload/>
+          </ProtectedRoute>
+        )
+        
       },
       {
         path:"file/detail/:fileId",
-        element:<FileDetail/>
+        element:(
+          <ProtectedRoute>
+            <FileDetail/>
+          </ProtectedRoute>
+        )
+        
       },
       {
         path:"myfiles/:userId",
-        element:<MyFiles/>
+        element:(
+          <ProtectedRoute>
+            <MyFiles/>
+          </ProtectedRoute>
+        )
+        
       },
       {
         path:"login",
