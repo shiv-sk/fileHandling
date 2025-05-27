@@ -12,6 +12,7 @@ const allowedMimeTypes = [
 const allowedExtensions = [".jpg" , ".jpeg" , ".doc" , ".docx" , ".pdf" , ".jpg", ".jpeg", ".png", ".gif", ".webp", ".svg"];
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
+    console.log("file is passed from here! ");
     cb(null, './temp/uploads')
   },
   filename: function (req, file, cb) {

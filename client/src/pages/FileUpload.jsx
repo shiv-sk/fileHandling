@@ -5,7 +5,7 @@ import { baseUrl, postAndPatchReq } from '../apicalls/apicalls';
 import { toast } from 'react-toastify';
 import { useAuth } from '../context/AuthContext';
 export default function FileUpload(){
-    const [file , setFile] = useState(null);
+    const [files , setFiles] = useState([]);
     const [isLoading , setIsLoading] = useState(false);
     const {user} = useAuth();
     const onDrop = useCallback((acceptedFiles , fileRejections)=>{
@@ -20,30 +20,43 @@ export default function FileUpload(){
             return;
         }
         if(acceptedFiles.length > 0){
-            const selectedFile = acceptedFiles[0];
-            const fileWithPreview = Object.assign(selectedFile, {
-                preview: URL.createObjectURL(selectedFile),
-            })
-            setFile(fileWithPreview);
+            setFiles(acceptedFiles.map((file)=>(
+                Object.assign(file , {preview:URL.createObjectURL(file)})
+            )))
         }
     } , []);
 
     const filePreview = ()=>{
-        if(!file){
-            return;
+        if(!files || files.length === 0){
+            return null;
         }
-        if(file.type.startsWith("image/")){
-            return <img src={file.preview} alt="preview" className="h-40 mt-4" />
-        }
-        if(file.type.startsWith("application/pdf")){
-            return <iframe src={file.preview} width="100%" height="400px" title="PDF Preview" />
-        }
+        return files.map((file , index)=>{
+            if(file.type.startsWith("image/")){
+                return (
+                    <div key={index} className="mt-4">
+                        <img src={file.preview} alt={`preview-${index}`} className="h-40" />
+                    </div>
+                )
+            }
+            if(file.type === "application/pdf"){
+                return(
+                    <div key={index} className="mt-4">
+                        <iframe src={file.preview}  width="100%" height="400px" />
+                    </div>
+                )
+            }
+            return(
+                <div key={index} className="mt-4">
+                    <p>{file.name} (No preview available)</p>
+                </div>
+            )
+        })
     }
     const MAX_FILE_SIZE = 1 * 1024 * 1024;
     const { getRootProps, getInputProps, isDragActive } = useDropzone({
         onDrop,
         maxSize:MAX_FILE_SIZE,
-        multiple:false,
+        multiple:2,
         accept:{
         'application/pdf': [],
         'application/msword': [],
@@ -67,17 +80,17 @@ export default function FileUpload(){
             toast.error("please login! ");
             return;
         }
-        else if(!file){
+        else if(files.length === 0){
             toast.error("please select file!");
             return;
         }
         setIsLoading(true);
         try {
             const formData = new FormData();
-            formData.append("file" , file);
+            files.forEach(file => formData.append("files" , file));
             formData.append("user" , user._id);
             const response = await postAndPatchReq(`${baseUrl}/file` , "post" , formData , true , onUploadProgress);
-            // console.log("response from handleUpload! " , response);
+            console.log("response from handleUpload! " , response);
             if(response.status === "success"){
                 toast.success("file uploaded successfully! ");
             }
@@ -112,11 +125,12 @@ export default function FileUpload(){
             {filePreview()}
             <p>maxFileSize 1MB</p>
             {
-                file ? (
-                    <div className="flex flex-col items-center gap-1">
+                files && files.length > 0 ? files.map((file , index)=>(
+                    <div className="flex flex-col items-center gap-1" key={index}>
                         <span>selectedFileName: {file?.name}</span>
                         <span>selectedFileSize: {(file?.size / 1024).toFixed(2)}Kb</span>
                     </div>
+                )   
                 ) : ""
             }
             <button className="btn btn-secondary" type='button' onClick={handleUpload}>upload</button>

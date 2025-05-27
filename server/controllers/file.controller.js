@@ -7,39 +7,37 @@ const uploadOnCloudinary = require("../utils/uploadonCloudinary");
 //create newFile
 exports.readFile = asyncHandler(async(req , res)=>{
     const {user} = req.body;
+    console.log("the request is! " , req);
     if(!user){
         throw new ApiError(400 , "user is missing or not valid");
     }
-    const fileDetails = req.file;
-    if(!fileDetails){
+    const uploadedFiles = req.files;
+    if(uploadedFiles.length === 0){
         throw new ApiError(400 , "file is missing");
     }
-    const filePath = fileDetails?.path;
-    if(!filePath){
-        throw new ApiError(500 , "filePath is not found! ");
+    console.log("uploaded files! " , uploadedFiles);
+    const uploadResults = [];
+    for(const file of uploadedFiles){
+        const filePath = file?.path;
+        if(!filePath){
+            throw new ApiError(500 , "filePath is not found! ");
+        }
+        const uploadToCloudinary = await uploadOnCloudinary(filePath);
+        if(!uploadToCloudinary){
+            throw new ApiError(500 , "file is not uploaded to cloudinary! ");
+        }
+        const newFile = await FileUpload.create({
+            fileName:file.filename,
+            fileSize:(file.size / 1024).toFixed(4),
+            fileType:file.mimetype,
+            fileLocation:uploadToCloudinary,
+            user
+        })
+        uploadResults.push(newFile);
     }
-    const uploadToCloudinary = await uploadOnCloudinary(filePath);
-    if(!uploadToCloudinary){
-        throw new ApiError(500 , "file is not uploaded to cloudinary! ");
-    }
-    // console.log(fileDetails);
-    const dataToStore = {
-        mimeType:fileDetails.mimetype,
-        fileName:fileDetails.filename,
-        fileSize:(fileDetails.size / 1024).toFixed(2)
-    }
-    const newFile = await FileUpload.create({
-        fileName:dataToStore.fileName,
-        fileSize:dataToStore.fileSize,
-        fileType:dataToStore.mimeType,
-        fileLocation:uploadToCloudinary,
-        user
-    })
-    if(!newFile){
-        throw new ApiError(500 , "file is not created on DB! ");
-    }
+    
     return res.status(201).json(
-        new ApiResponse("data to store in file! " , newFile , 201)
+        new ApiResponse("data to store in file! " , uploadResults , 201)
     )
 })
 

@@ -1,6 +1,6 @@
 import axios from "axios";
-const baseUrl = import.meta.env.VITE_API_URL;
-// const baseUrl = "http://localhost:4000/api/v1" -----> for localuse
+// const baseUrl = import.meta.env.VITE_API_URL;
+const baseUrl = "http://localhost:4000/api/v1" //-----> for localuse
 const getAndDeleteReq = async(url , method)=>{
     try {
         const config = {
@@ -29,7 +29,6 @@ const postAndPatchReq = async(url , method , data , isFormData = false , onUploa
             data,
             headers:{
                 "Content-Type": isFormData ? "multipart/form-data" : "application/json",
-                'Connection': 'keep-alive'
             },
             withCredentials:true,
         }
